@@ -8,6 +8,6 @@ public interface IGroupDAO {
 
 	public boolean addGroup(Group group);
 	public boolean findGroupById(int gid);
-	//public boolean deleteGroup(Group group);
-	//public List<Group>
+	public boolean addUser(int uid, int gid);
+	public List<Group> getAll();
 }

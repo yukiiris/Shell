@@ -3,11 +3,8 @@ package com.Shell.dao.proxy;
 import java.sql.SQLException;
 
 import com.Shell.dao.IResultDAO;
-import com.Shell.dao.IUserDAO;
 import com.Shell.dao.Impl.ResultDAOImpl;
-import com.Shell.dao.Impl.UserDAOImpl;
 import com.Shell.dbc.DatabaseConnection;
-import com.Shell.vo.User;
 
 public class ReslutDAOProxy implements IResultDAO{
 

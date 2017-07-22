@@ -2,16 +2,10 @@ package com.Shell.vo;
 
 public class File {
 
-	private int fid;
 	private int uid;
 	private int gid;
+	private String name;
 	
-	public int getFid() {
-		return fid;
-	}
-	public void setFid(int fid) {
-		this.fid = fid;
-	}
 	public int getUid() {
 		return uid;
 	}
@@ -23,5 +17,11 @@ public class File {
 	}
 	public void setGid(int gid) {
 		this.gid = gid;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 }

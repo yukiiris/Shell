@@ -21,7 +21,23 @@ public class UserImpl implements UserAPI{
 		}
 		return isCreate;
 	}
-
+	
+	@Override
+	public boolean deleteUser(User user)
+	{
+		
+		boolean isCreate = false;
+		try
+		{
+			//TODO
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return isCreate;	
+	}
+	
 	@Override
 	public boolean changePassword(User user)
 	{
@@ -35,7 +51,8 @@ public class UserImpl implements UserAPI{
 		{
 			e.printStackTrace();
 		}
-		return isCreate;	}
+		return isCreate;	
+	}
 
 	@Override
 	public String login(User user) 

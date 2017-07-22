@@ -1,6 +1,7 @@
 package com.Shell.Jersey.API;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -34,4 +35,8 @@ public interface UserAPI {
 	@Produces(MediaType.APPLICATION_JSON)
 	public boolean setGroup(User user);
 	
+	@DELETE
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean deleteUser(User user);
 }

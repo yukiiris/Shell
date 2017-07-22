@@ -3,6 +3,8 @@ package com.Shell.rc;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import com.Shell.dao.factory.DAOFactory;
+
 public class CommandRunner {
 	
 	private String command;
@@ -12,9 +14,10 @@ public class CommandRunner {
 		this.command = command;
 	}
 	
-	public void runCommand()
+	public String runCommand()
 	{
-		Process process = null;  
+		Process process = null; 
+		String result = null;
         try 
         {  
             process = Runtime.getRuntime().exec(command);  
@@ -33,18 +36,19 @@ public class CommandRunner {
 	        while ((line = br.readLine()) != null) {  
 	            sb.append(line).append("\n");  
 	        }  
-	        String result = sb.toString();  
+	        result = sb.toString();
 	        System.out.println(result);  
         }   
     	catch (Exception e) 
         {  
     		e.printStackTrace();  
         }  
+        return result;
 	}
 	
 	public static void main(String[] args)
 	{
-		CommandRunner commandRunner = new CommandRunner("");
+		CommandRunner commandRunner = new CommandRunner("echo \"123\"");
 		commandRunner.runCommand();
 	}
 }

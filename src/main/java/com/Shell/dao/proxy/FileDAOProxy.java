@@ -4,17 +4,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.Shell.dao.IGroupDAO;
-import com.Shell.dao.Impl.GroupDAOImpl;
+import com.Shell.dao.IFileDAO;
+import com.Shell.dao.Impl.FileDAOImpl;
 import com.Shell.dbc.DatabaseConnection;
-import com.Shell.vo.Group;
+import com.Shell.vo.File;
 
-public class GroupDAOProxy implements IGroupDAO{
+public class FileDAOProxy implements IFileDAO{
 
 	private DatabaseConnection dbc = null;
-	private GroupDAOImpl dao = null;
+	private FileDAOImpl dao = null;
 	
-	public GroupDAOProxy() throws SQLException, ClassNotFoundException
+	public FileDAOProxy() throws SQLException, ClassNotFoundException
 	{
 		try
 		{
@@ -24,16 +24,16 @@ public class GroupDAOProxy implements IGroupDAO{
 		{
 			e.printStackTrace();
 		}
-		dao = new GroupDAOImpl(dbc.getConnection());
+		dao = new FileDAOImpl(dbc.getConnection());
 	}
 	
 
-	public boolean addGroup(Group group)
+	public boolean addFile(File file)
 	{
 		boolean isCreate = false;
 		try
 		{
-			isCreate = dao.addGroup(group);
+			isCreate = dao.addFile(file);
 		}
 		catch (Exception e)
 		{
@@ -53,37 +53,13 @@ public class GroupDAOProxy implements IGroupDAO{
 		return isCreate;
 	}
 	
-	public boolean addUser(int uid, int gid)
-	{
-		boolean isCreate = false;
-		try
-		{
-			isCreate = dao.addUser(uid, gid);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			try
-			{
-				dbc.close();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
-		return isCreate;
-	}
 	
-	public boolean findGroupById(int gid)
+	public File findFileByName(String name)
 	{
-		boolean isFind = false;
+		File file = new File();
 		try
 		{
-			isFind = dao.findGroupById(gid);
+			file = dao.findFileByName(name);
 		}
 		catch (Exception e)
 		{
@@ -100,19 +76,19 @@ public class GroupDAOProxy implements IGroupDAO{
 				e.printStackTrace();
 			}
 		}
-		return isFind;
+		return file;
 	}
 
 
 
 	@Override
-	public List<Group> getAll() 
+	public List<File> getAll() 
 	{
-		List<Group> groups = new ArrayList<>();
+		List<File> files = new ArrayList<>();
 		
 		try
 		{
-			groups = dao.getAll();
+			files = dao.getAll();
 		}
 		catch (Exception e)
 		{
@@ -129,7 +105,28 @@ public class GroupDAOProxy implements IGroupDAO{
 				e.printStackTrace();
 			}
 		}
-		return groups;
+		return files;
 	}
-
+	
+	public boolean deleteFile(String name)
+	{
+		boolean isDelete = false;
+		try
+		{
+			isDelete = dao.deleteFile(name);
+		}
+		finally
+		{
+			try
+			{
+				dbc.close();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return isDelete;
+	}
+	
 }

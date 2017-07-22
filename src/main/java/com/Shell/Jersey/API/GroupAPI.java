@@ -22,9 +22,9 @@ public interface GroupAPI {
 	@Produces(MediaType.APPLICATION_JSON)
 	public boolean deleteGroup(Group group);
 	
-	@Path("/change")
+	@Path("/user")
 	@POST
-	@Consumes()
+	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-	public boolean changeGroup(Group group);
+	public boolean addUser(int uid, int gid);
 }
