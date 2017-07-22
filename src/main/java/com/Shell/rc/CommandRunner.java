@@ -42,9 +42,9 @@ public class CommandRunner {
         }  
 	}
 	
-//	public static void main(String[] args)
-//	{
-//		runCommand("ls");
-//		runCommand("moltres");
-//	}
+	public static void main(String[] args)
+	{
+		CommandRunner commandRunner = new CommandRunner("");
+		commandRunner.runCommand();
+	}
 }

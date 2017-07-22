@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,20 +21,56 @@ public class CommandDAOImpl implements ICommandDAO{
 		this.conn = conn;
 	}
 	
+	public boolean Complete(int cid)
+	{
+		boolean isCreate = false;
+		try
+		{
+			String sql = "UPDATE command SET status=1 WHERE cid=?";
+			pstm = conn.prepareStatement(sql);
+			pstm.setInt(1, cid);
+			
+			if (pstm.executeUpdate() > 0)
+			{
+				isCreate = true;
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				if (pstm != null)
+				{
+					pstm.close();
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return isCreate;
+	}
+	
 	public Command getNext()
 	{
 		Command command = new Command();
 		try
 		{
-			String sql = "select * from command order by date desc limit 1";
+			String sql = "select * from command where status=-1 order by date desc limit 1";
 			pstm = conn.prepareStatement(sql);
 			ResultSet rs = pstm.executeQuery();
 			
 			while (rs.next())
 			{
+				Timestamp timestamp = rs.getTimestamp("date");
 				command.setCid(rs.getInt("cid"));
 				command.setCommand(rs.getString("command"));
-				command.setDate(rs.getDate("date"));
+				command.setDate(new java.util.Date(timestamp.getTime()));
 				command.setStatus(rs.getInt("status"));
 				command.setUid(rs.getInt("uid"));
 			}

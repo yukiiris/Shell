@@ -41,6 +41,31 @@ public class CommandDAOProxy implements ICommandDAO{
 		return command;
 	}
 	
+	public boolean Complete(int cid)
+	{
+		boolean isCreate = false;
+		try
+		{
+			isCreate = dao.Complete(cid);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				dbc.close();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return isCreate;
+	}
+	
 	public boolean ajustCommand(Command command)
 	{
 		boolean isCreate = false;

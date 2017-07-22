@@ -8,5 +8,5 @@ public interface IUserDAO {
 	public boolean findUser(User user);
 	public boolean findUserByName(String name);
 	public boolean changePassword(User user);
-	public boolean setGroup();
+	//public boolean setGroup();
 }
