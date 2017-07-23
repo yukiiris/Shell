@@ -28,12 +28,12 @@ public class FileDAOProxy implements IFileDAO{
 	}
 	
 
-	public boolean addFile(File file)
+	public boolean addFiles(List<File> files)
 	{
 		boolean isCreate = false;
 		try
 		{
-			isCreate = dao.addFile(file);
+			isCreate = dao.addFiles(files);
 		}
 		catch (Exception e)
 		{

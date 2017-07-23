@@ -3,6 +3,7 @@ package com.Shell.filter;
 import java.io.IOException;
 
 import javax.annotation.Priority;
+import javax.ws.rs.Path;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -21,10 +22,16 @@ import io.jsonwebtoken.Jwts;
 //实现该拦截器借口
 //@Provider可以自动注册
 public class JWTSecurityFilter implements ContainerRequestFilter{
- 
 	@Override
 	public void filter(ContainerRequestContext containerRequestContext) throws IOException 
 	{
+		String Path = ((ContainerRequest)containerRequestContext).getPath(true);
+		String method = ((ContainerRequest)containerRequestContext).getMethod();
+
+		if (Path.equals("/user") && method.equals("POST"))
+		{
+			return;
+		}
 		String jsw = ((ContainerRequest) containerRequestContext).getHeaderString("x-auth-token");
 		try
 		{

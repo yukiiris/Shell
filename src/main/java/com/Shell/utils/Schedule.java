@@ -46,7 +46,14 @@ public class Schedule{
 		
         try {  
         	command = DAOFactory.getICommandDAOInstance().getNext();
-        	date = command.getDate();
+        	SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+            String d = format.format(command.getDate());  
+            Date date=format.parse(d); 
+        	if (date.getTime() < new Date().getTime())
+        	{
+        		return;
+        	}
+        	
         	System.out.println("下次任务时间：" + date);  
         	System.out.println("现在是:" + new Date());
         } catch (Exception e1) {  

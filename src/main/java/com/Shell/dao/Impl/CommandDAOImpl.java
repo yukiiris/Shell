@@ -1,10 +1,8 @@
 package com.Shell.dao.Impl;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,10 +65,9 @@ public class CommandDAOImpl implements ICommandDAO{
 			
 			while (rs.next())
 			{
-				Timestamp timestamp = rs.getTimestamp("date");
 				command.setCid(rs.getInt("cid"));
 				command.setCommand(rs.getString("command"));
-				command.setDate(new java.util.Date(timestamp.getTime()));
+				command.setDate(Long.parseLong(rs.getString("date")));
 				command.setStatus(rs.getInt("status"));
 				command.setUid(rs.getInt("uid"));
 			}
@@ -90,9 +87,9 @@ public class CommandDAOImpl implements ICommandDAO{
 		{
 			String sql = "INSERT INTO command(cid,date,uid,command,status) VALUES(null,?,?,?,-1)";
 			pstm = conn.prepareStatement(sql);
-			pstm.setDate(1, (Date)command.getDate());
+			pstm.setString(1, command.getDate() + "");
 			pstm.setInt(2, command.getUid());
-			pstm.setInt(3, command.getUid());
+			pstm.setString(3, command.getCommand());
 			
 			if (pstm.executeUpdate() > 0)
 			{
@@ -160,6 +157,7 @@ public class CommandDAOImpl implements ICommandDAO{
 
 	public List<Command> getAll(int uid)
 	{
+		System.out.println(uid);
 		List<Command> result = new ArrayList<>();
 		
 		try
@@ -174,7 +172,7 @@ public class CommandDAOImpl implements ICommandDAO{
 				Command command = new Command();
 				command.setCid(rs.getInt("cid"));
 				command.setCommand(rs.getString("command"));
-				command.setDate(rs.getDate("date"));
+				command.setDate(Long.parseLong(rs.getString("date")));
 				command.setStatus(rs.getInt("status"));
 				command.setUid(rs.getInt("uid"));
 				result.add(command);

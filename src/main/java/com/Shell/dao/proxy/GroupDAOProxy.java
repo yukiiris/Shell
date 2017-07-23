@@ -78,12 +78,12 @@ public class GroupDAOProxy implements IGroupDAO{
 		return isCreate;
 	}
 	
-	public boolean findGroupById(int gid)
+	public Group findGroupById(int gid)
 	{
-		boolean isFind = false;
+		Group group = new Group();
 		try
 		{
-			isFind = dao.findGroupById(gid);
+			group = dao.findGroupById(gid);
 		}
 		catch (Exception e)
 		{
@@ -100,19 +100,19 @@ public class GroupDAOProxy implements IGroupDAO{
 				e.printStackTrace();
 			}
 		}
-		return isFind;
+		return group;
 	}
 
 
 
 	@Override
-	public List<Group> getAll() 
+	public List<Group> getAllGroup() 
 	{
 		List<Group> groups = new ArrayList<>();
 		
 		try
 		{
-			groups = dao.getAll();
+			groups = dao.getAllGroup();
 		}
 		catch (Exception e)
 		{

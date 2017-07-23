@@ -8,7 +8,6 @@ public interface IFileDAO {
 
 	public List<File> getAll();
 	public File findFileByName(String name);
-	public boolean addFile(File file);
+	public boolean addFiles(List<File> files);
 	public boolean deleteFile(String name);
-	
 }

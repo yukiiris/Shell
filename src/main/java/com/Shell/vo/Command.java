@@ -1,14 +1,21 @@
 package com.Shell.vo;
 
-import java.util.Date;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import com.Shell.utils.CustomDateSerializer;
+
+@XmlRootElement
 public class Command {
 
 	private int uid;
 	private String command;
 	private int status;
-	private Date date;
+	private long date;
 	private int cid;
+
 	
 	public int getUid() {
 		return uid;
@@ -28,10 +35,12 @@ public class Command {
 	public void setStatus(int i) {
 		this.status = i;
 	}
-	public Date getDate() {
+	@JsonSerialize(using = CustomDateSerializer.class) 
+	public long getDate() {
 		return date;
 	}
-	public void setDate(Date date) {
+	@JsonSerialize(using = CustomDateSerializer.class) 
+	public void setDate(long date) {
 		this.date = date;
 	}
 	public int getCid() {

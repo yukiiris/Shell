@@ -19,7 +19,7 @@ public class GroupDAOImpl implements IGroupDAO{
 		this.conn = conn;
 	}
 	
-	public List<Group> getAll()
+	public List<Group> getAllGroup()
 	{
 		String sql = "SELECT * FROM groups";
 		List<Group> groups = new ArrayList<>();
@@ -139,9 +139,9 @@ public class GroupDAOImpl implements IGroupDAO{
 		return isCreate;
 	}
 	
-	public boolean findGroupById(int gid)
+	public Group findGroupById(int gid)
 	{
-		boolean isFind = false;
+		Group group = new Group();
 		try
 		{
 			String sql = "SELECT * FROM group WHERE id=?";
@@ -151,7 +151,9 @@ public class GroupDAOImpl implements IGroupDAO{
 			
 			while (rs.next())
 			{
-				isFind = true;
+				group.setGid(rs.getInt("gid"));
+				group.setName(rs.getString("name"));
+				group.setUsers(rs.getString("users"));
 				//user.setID(rs.getInt(1));
 			}
 			rs.close();
@@ -185,6 +187,6 @@ public class GroupDAOImpl implements IGroupDAO{
 				exception.printStackTrace();
 			}
 		}
-		return isFind;
+		return group;
 	}
 }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.Shell.dao.IFileDAO;
+import com.Shell.dao.factory.DAOFactory;
 import com.Shell.vo.File;
 
 public class FileDAOImpl implements IFileDAO{
@@ -69,20 +70,23 @@ public class FileDAOImpl implements IFileDAO{
 		return file;
 	}
 	
-	public boolean addFile(File file)
+	public boolean addFiles(List<File> files)
 	{
 		boolean isCreate = false;
 		try
 		{
 			String sql = "INSERT INTO file(uid,name,gid) VALUES(?,?,?)";
-			pstm = conn.prepareStatement(sql);
-			pstm.setInt(1, file.getUid());
-			pstm.setString(2, file.getName());
-			pstm.setInt(1, file.getGid());
-			
-			if (pstm.executeUpdate() > 0)
+			for (File file : files)
 			{
-				isCreate = true;
+				pstm = conn.prepareStatement(sql);
+				pstm.setInt(1, file.getUid());
+				pstm.setString(2, file.getName());
+				pstm.setInt(1, file.getGid());
+				
+				if (pstm.executeUpdate() > 0)
+				{
+					isCreate = isCreate && true;
+				}
 			}
 		}
 		catch (Exception e)

@@ -1,5 +1,8 @@
 package com.Shell.vo;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class File {
 
 	private int uid;
