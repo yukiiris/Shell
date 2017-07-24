@@ -6,6 +6,7 @@ import java.util.List;
 import com.Shell.Jersey.API.CommandAPI;
 import com.Shell.dao.factory.DAOFactory;
 import com.Shell.utils.CommandPareser;
+import com.Shell.utils.Schedule;
 import com.Shell.vo.Command;
 import com.Shell.vo.User;
 
@@ -30,6 +31,7 @@ public class CommandImpl implements CommandAPI{
 		try
 		{
 			isAdd = DAOFactory.getICommandDAOInstance().addCommand(command);
+			Schedule.start();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -40,6 +42,7 @@ public class CommandImpl implements CommandAPI{
 	@Override
 	public boolean ajustCommand(Command command) {
 		User user = new User();
+		boolean isAdd = false;
 		try
 		{
 			user = DAOFactory.getIUserDAOInstance().findUserById(command.getUid());
@@ -52,7 +55,15 @@ public class CommandImpl implements CommandAPI{
 		{
 			return false;
 		}
-		return true;
+		try
+		{
+			isAdd = DAOFactory.getICommandDAOInstance().ajustCommand(command);
+			Schedule.start();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return isAdd;
 	}
 
 	@Override

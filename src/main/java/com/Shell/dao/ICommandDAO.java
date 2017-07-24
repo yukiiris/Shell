@@ -11,4 +11,5 @@ public interface ICommandDAO {
 	public List<Command> getAll(int uid);
 	public Command getNext();
 	public boolean Complete(int cid);
+	public int findUidByCid(int cid);
 }

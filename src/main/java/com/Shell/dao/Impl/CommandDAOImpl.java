@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.Shell.dao.ICommandDAO;
@@ -59,8 +60,10 @@ public class CommandDAOImpl implements ICommandDAO{
 		Command command = new Command();
 		try
 		{
-			String sql = "select * from command where status=-1 order by date desc limit 1";
+			String sql = "select * from command where status=-1 and date>? order by date desc limit 1";
 			pstm = conn.prepareStatement(sql);
+			pstm.setLong(1, new Date().getTime());
+			System.out.println(new Date().getTime());
 			ResultSet rs = pstm.executeQuery();
 			
 			while (rs.next())
@@ -77,7 +80,80 @@ public class CommandDAOImpl implements ICommandDAO{
 		{
 			exception.printStackTrace();
 		}
+		finally
+		{
+			try
+			{
+				if (pstm != null)
+				{
+					pstm.close();
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			try
+			{
+				if (conn != null)
+				{
+					conn.close();
+				}
+			}
+			catch (Exception exception)
+			{
+				exception.printStackTrace();
+			}
+		}
 		return command;
+	}
+	
+	public int findUidByCid(int cid)
+	{
+		int uid = 0;
+		try
+		{
+			String sql = "SELECT uid FROM command WHERE cid=?";
+			pstm = conn.prepareStatement(sql);
+			pstm.setInt(1, cid);
+			ResultSet rs = pstm.executeQuery();
+			
+			while (rs.next())
+			{
+				uid = rs.getInt("uid");
+			}
+			rs.close();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				if (pstm != null)
+				{
+					pstm.close();
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			try
+			{
+				if (conn != null)
+				{
+					conn.close();
+				}
+			}
+			catch (Exception exception)
+			{
+				exception.printStackTrace();
+			}
+		}
+		return uid;
 	}
 	
 	public boolean addCommand(Command command)

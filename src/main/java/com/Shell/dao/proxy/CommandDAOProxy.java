@@ -27,6 +27,18 @@ public class CommandDAOProxy implements ICommandDAO{
 		dao = new CommandDAOImpl(dbc.getConnection());
 	}
 	
+	public int findUidByCid(int cid)
+	{
+		int uid = 0;
+		try {
+			uid = dao.findUidByCid(cid);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return uid;
+	}
+	
+	
 	public Command getNext()
 	{
 		Command command = new Command();

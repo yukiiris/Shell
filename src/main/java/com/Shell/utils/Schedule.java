@@ -20,6 +20,7 @@ public class Schedule{
 		public static Date date;
 		static int count = 0;
 		static Command command = null;
+		static boolean isClose = false;
 		public Schedule()
 		{
 			start();
@@ -48,19 +49,14 @@ public class Schedule{
         	command = DAOFactory.getICommandDAOInstance().getNext();
         	SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
             String d = format.format(command.getDate());  
-            Date date=format.parse(d); 
-        	if (date.getTime() < new Date().getTime())
-        	{
-        		return;
-        	}
-        	
+            date=format.parse(d); 
         	System.out.println("下次任务时间：" + date);  
         	System.out.println("现在是:" + new Date());
         } catch (Exception e1) {  
             // TODO Auto-generated catch block  
             e1.printStackTrace();  
         }
-
+   
         Scheduler scheduler = null;  
         try {  
             scheduler = StdSchedulerFactory.getDefaultScheduler();  
@@ -68,9 +64,11 @@ public class Schedule{
             // TODO Auto-generated catch block  
             e.printStackTrace();  
         }  
+        
         try {  
         	RunJob.command = command.getCommand();
         	RunJob.cid = command.getCid();
+        	isClose = false;
             scheduler.start();  
         } catch (SchedulerException e) {  
             // TODO Auto-generated catch block  
@@ -85,7 +83,7 @@ public class Schedule{
                 // TODO Auto-generated catch block  
                 e1.printStackTrace();  
             }    
-              
+
             //重新开启任务  
             try {  
                 scheduler = StdSchedulerFactory.getDefaultScheduler();  
@@ -97,13 +95,35 @@ public class Schedule{
             	RunJob.command = command.getCommand();
             	RunJob.cid = command.getCid();
                 scheduler.start();  
+                isClose = false;
             } catch (SchedulerException e) {  
                 // TODO Auto-generated catch block  
                 e.printStackTrace();  
             }  
               
+        	if (command.getDate() == 0 || command.getDate() < new Date().getTime())
+        	{
+        		try {
+					scheduler.shutdown();
+					isClose = true;
+				} catch (SchedulerException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();				
+				}
+        	}
             //开启新的调度任务  
             String cron = getCron(date);
+            System.out.println(cron);
+            if (cron == null)
+        	{
+        		try {
+					scheduler.shutdown();
+				} catch (SchedulerException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					
+				}
+        	}
             JobDetail job = JobBuilder.newJob(RunJob.class).withIdentity("job1", "group1").build();
             CronTrigger cronTrigger = null;
 			try {
@@ -116,24 +136,50 @@ public class Schedule{
             // 时间格式: <!-- s m h d m w(?) y(?) -->, 分别对应: 秒>分>小时>日>月>周>年  
 
             try {  
+            	if (!isClose)
                 scheduler.scheduleJob(job, cronTrigger);  
             } catch (SchedulerException e) {  
                 // TODO Auto-generated catch block  
                 e.printStackTrace();  
             }  
         } else {  
-        	
+        	if (command.getDate() == 0 || command.getDate() < new Date().getTime())
+        	{
+        		try {
+        			isClose = true;
+					scheduler.shutdown();
+				} catch (SchedulerException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					
+				}
+        	}
         	String cron = getCron(date);
         	System.out.println(cron);
+        	if (cron == null)
+        	{
+        		try {
+        			isClose = true;
+					scheduler.shutdown();
+				} catch (SchedulerException e) {
+					// TODO Auto-generated catch block
+					System.out.println(1111);
+					e.printStackTrace();
+					
+				}
+        	}
         	 JobDetail job = JobBuilder.newJob(RunJob.class).withIdentity("job1", "group1").build();
         	 CronTrigger cronTrigger = null;
              try {
+            	 if (cron != null)
 				cronTrigger = new CronTriggerImpl("as", "asd", cron);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
              try {  
+       
+            	 if (!isClose)
                  scheduler.scheduleJob(job, cronTrigger);  
              } catch (SchedulerException e) {  
                  // TODO Auto-generated catch block  

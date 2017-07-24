@@ -27,7 +27,31 @@ public class GroupDAOProxy implements IGroupDAO{
 		dao = new GroupDAOImpl(dbc.getConnection());
 	}
 	
-
+	public String findAuthorityById(int gid, String Authotiry)
+	{
+		String result = null;
+		try
+		{
+			result = dao.findAuthorityById(gid, Authotiry);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				dbc.close();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	
 	public boolean addGroup(Group group)
 	{
 		boolean isCreate = false;
@@ -130,6 +154,32 @@ public class GroupDAOProxy implements IGroupDAO{
 			}
 		}
 		return groups;
+	}
+
+	@Override
+	public boolean setAuthority(int gid, List<String> authority, String file)
+	{
+		boolean isSet = false;
+		try
+		{
+			isSet = dao.setAuthority(gid, authority, file);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				dbc.close();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return isSet;
 	}
 
 }

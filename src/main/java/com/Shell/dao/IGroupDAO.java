@@ -10,4 +10,6 @@ public interface IGroupDAO {
 	public Group findGroupById(int gid);
 	public boolean addUser(int uid, int gid);
 	public List<Group> getAllGroup();
+	public String findAuthorityById(int gid, String authority);
+	public boolean setAuthority(int gid, List<String> authority, String file);
 }

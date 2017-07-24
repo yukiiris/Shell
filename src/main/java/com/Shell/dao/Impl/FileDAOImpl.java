@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.Shell.dao.IFileDAO;
-import com.Shell.dao.factory.DAOFactory;
 import com.Shell.vo.File;
 
 public class FileDAOImpl implements IFileDAO{
@@ -18,6 +17,54 @@ public class FileDAOImpl implements IFileDAO{
 	public FileDAOImpl(Connection conn)
 	{
 		this.conn = conn;
+	}
+	
+	public boolean changeGroup(int gid, String name)
+	{
+		boolean isChange = false;
+		try
+		{
+			String sql = "UPDATE files SET gid=? WHERE name=?";
+			pstm = conn.prepareStatement(sql);
+			pstm.setString(1, name);
+			
+			if (pstm.executeUpdate() > 0)
+			{
+				isChange = true;
+			}
+			sql = "";
+			//TODO
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				if (pstm != null)
+				{
+					pstm.close();
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			try
+			{
+				if (conn != null)
+				{
+					conn.close();
+				}
+			}
+			catch (Exception exception)
+			{
+				exception.printStackTrace();
+			}
+		}
+		return isChange;
 	}
 	
 	public File findFileByName(String name)
@@ -81,7 +128,7 @@ public class FileDAOImpl implements IFileDAO{
 				pstm = conn.prepareStatement(sql);
 				pstm.setInt(1, file.getUid());
 				pstm.setString(2, file.getName());
-				pstm.setInt(1, file.getGid());
+				pstm.setInt(3, file.getGid());
 				
 				if (pstm.executeUpdate() > 0)
 				{

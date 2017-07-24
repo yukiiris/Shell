@@ -10,4 +10,5 @@ public interface IFileDAO {
 	public File findFileByName(String name);
 	public boolean addFiles(List<File> files);
 	public boolean deleteFile(String name);
+	public boolean changeGroup(int gid, String name);
 }
