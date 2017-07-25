@@ -8,18 +8,24 @@ import com.Shell.vo.User;
 public class UserImpl implements UserAPI{
 
 	@Override
-	public boolean createUser(User user)
+	public int createUser(User user, int gid)
 	{
-		boolean isCreate = false;
+		int uid = 0;
+		if (gid == 0)
+		{
+			return 0;
+		}
 		try
 		{
-			isCreate = DAOFactory.getIUserDAOInstance().doCreate(user);
+			uid = DAOFactory.getIUserDAOInstance().doCreate(user);
+			GroupImpl groupImpl = new GroupImpl();
+			groupImpl.addUser(uid, gid, 1);
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		return isCreate;
+		return uid;
 	}
 	
 	@Override
@@ -29,7 +35,7 @@ public class UserImpl implements UserAPI{
 		boolean isCreate = false;
 		try
 		{
-			//TODO
+			DAOFactory.getIUserDAOInstance().deleteUser(user);
 		}
 		catch (Exception e)
 		{
@@ -60,8 +66,14 @@ public class UserImpl implements UserAPI{
 		return Token.authenticateUser(user);
 	}
 
-	public boolean setGroup(User user)
+	public boolean setGroup(User user, int gid)
 	{
-		return false;
+		boolean isSet = false;
+		try {
+			isSet = DAOFactory.getIUserDAOInstance().setGroup(user, gid);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return isSet;
 	}
 }

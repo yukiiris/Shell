@@ -8,8 +8,10 @@ public interface IGroupDAO {
 
 	public boolean addGroup(Group group);
 	public Group findGroupById(int gid);
-	public boolean addUser(int uid, int gid);
+	public boolean addUser(int uid, int gid, int isDe);
 	public List<Group> getAllGroup();
 	public String findAuthorityById(int gid, String authority);
-	public boolean setAuthority(int gid, List<String> authority, String file);
+	public boolean setAuthority(int gid, String authority, String file);
+	public String findUser(int gid);
+	public boolean deleteGroup(Group group);
 }

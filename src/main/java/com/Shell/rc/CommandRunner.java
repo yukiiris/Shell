@@ -18,7 +18,7 @@ public class CommandRunner {
 	{
 		Process process = null; 
 		String result = null;
-		String error = null;
+		String error = "";
 		int c = 0;
         try 
         {  
@@ -38,7 +38,7 @@ public class CommandRunner {
             String errline = null;  
             StringBuffer serror = new StringBuffer();
             while ((errline = brError.readLine()) != null) {  
-            	serror.append(line);
+            	serror.append(errline).append("\n");
                  System.out.println(errline);  
             } 
             error = serror.toString();
@@ -49,29 +49,8 @@ public class CommandRunner {
             e.printStackTrace();  
         }  
 
-//        try
-//        {
-//            
-//	        BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));  
-//	        StringBuffer sb = new StringBuffer();  
-//	        String line;  
-//	        while ((line = br.readLine()) != null) {  
-//	            sb.append(line).append("\n");  
-//	        }  
-//	        result = sb.toString();
-//	        System.out.println(result);  
-//        }   
-//    	catch (Exception e) 
-//        {  
-//    		e.printStackTrace();  
-//        }  
+        System.out.println(error);
         return c == 0 ? result : error;
 	}
 	
-//	public static void main(String[] args)
-//	{
-//		String command = "mkdir test";
-//		CommandRunner commandRunner = new CommandRunner(command);
-//		commandRunner.runCommand();
-//	}
 }

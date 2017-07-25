@@ -128,5 +128,12 @@ public class FileDAOProxy implements IFileDAO{
 		}
 		return isDelete;
 	}
+
+
+	@Override
+	public boolean changeGroup(int gid, String name) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 }

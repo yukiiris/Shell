@@ -6,9 +6,12 @@ import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import com.Shell.Jersey.Impl.CommandImpl;
+import com.Shell.Jersey.Impl.FileImpl;
 import com.Shell.Jersey.Impl.GroupImpl;
+import com.Shell.Jersey.Impl.ResultImpl;
 import com.Shell.Jersey.Impl.UserImpl;
 import com.Shell.filter.JWTSecurityFilter;
+import com.Shell.filter.PermissionFilter;
 
 public class JerseyResourceConfig extends ResourceConfig{
 
@@ -21,5 +24,8 @@ public class JerseyResourceConfig extends ResourceConfig{
 		register(UserImpl.class);
 		register(LoggingFilter.class);
 		register(JacksonJsonProvider.class);
+		register(ResultImpl.class);
+		register(FileImpl.class);
+		register(PermissionFilter.class);
 	}
 }

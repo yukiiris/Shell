@@ -29,12 +29,62 @@ public class UserDAOProxy implements IUserDAO{
 		dao = new UserDAOImpl(dbc.getConnection());
 	}
 	
-	public boolean setAuthority(List<Integer> users, List<String> authorities, List<File> files)
+	public boolean setGroup(User user, int uid)
+	{
+		boolean isSet = false;
+		try
+		{
+			isSet = dao.setGroup(user, uid);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				dbc.close();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return isSet;
+	}
+	
+	public int findGidByUid(int uid)
+	{
+		int gid = 0;
+		try
+		{
+			gid = dao.findGidByUid(uid);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				dbc.close();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return gid;
+	}
+	
+	public boolean deleteUser(User user)
 	{
 		boolean isCreate = false;
 		try
 		{
-			isCreate = dao.setAuthority(users, authorities, files);
+			isCreate = dao.deleteUser(user);
 		}
 		catch (Exception e)
 		{
@@ -54,12 +104,12 @@ public class UserDAOProxy implements IUserDAO{
 		return isCreate;
 	}
 	
-	public String findAuthorityByName(String name, String Authotiry)
+	public boolean setAuthority(int uid, String authorities, List<File> files)
 	{
-		String result = null;
+		boolean isCreate = false;
 		try
 		{
-			result = dao.findAuthorityByName(name, Authotiry);
+			isCreate = dao.setAuthority(uid, authorities, files);
 		}
 		catch (Exception e)
 		{
@@ -76,15 +126,40 @@ public class UserDAOProxy implements IUserDAO{
 				e.printStackTrace();
 			}
 		}
-		return result;
+		return isCreate;
 	}
 	
-	public String findAuthorityById(int uid, String Authotiry)
+//	public String findAuthorityByName(String name, String Authotiry)
+//	{
+//		String result = null;
+//		try
+//		{
+//			result = dao.findAuthorityByName(name, Authotiry);
+//		}
+//		catch (Exception e)
+//		{
+//			e.printStackTrace();
+//		}
+//		finally
+//		{
+//			try
+//			{
+//				dbc.close();
+//			}
+//			catch (Exception e)
+//			{
+//				e.printStackTrace();
+//			}
+//		}
+//		return result;
+//	}
+	
+	public String findAuthorityById(int uid, String file)
 	{
 		String result = null;
 		try
 		{
-			result = dao.findAuthorityById(uid, Authotiry);
+			result = dao.findAuthorityById(uid, file);
 		}
 		catch (Exception e)
 		{
@@ -129,12 +204,12 @@ public class UserDAOProxy implements IUserDAO{
 		return isCreate;
 	}
 	
-	public boolean doCreate(User user)
+	public int doCreate(User user)
 	{
-		boolean isCreate = false;
+		int uid = 0;
 		try
 		{
-			isCreate = dao.doCreate(user);
+			uid = dao.doCreate(user);
 		}
 		catch (Exception e)
 		{
@@ -151,7 +226,7 @@ public class UserDAOProxy implements IUserDAO{
 				e.printStackTrace();
 			}
 		}
-		return isCreate;
+		return uid;
 	}
 	
 	public boolean findUser(User user)

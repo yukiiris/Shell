@@ -39,6 +39,7 @@ public class JWTSecurityFilter implements ContainerRequestFilter{
 			String group = Jwts.parser().setSigningKey(Token.receiveSecret(DAOFactory.getIKeyDAOInstance().getKey())).parseClaimsJws(jsw).getBody().getAudience();
 			if (DAOFactory.getIUserDAOInstance().findUserByName(name))
 			{
+				System.out.println(group);
 				if (group.equals("root"))
 				{
 					return;

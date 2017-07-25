@@ -7,15 +7,16 @@ import com.Shell.vo.User;
 
 public interface IUserDAO {
 
-	public boolean doCreate(User user);
+	public int doCreate(User user);
 	public boolean findUser(User user);
 	public boolean findUserByName(String name);
 	public User findUserById(int uid);
 	public boolean changePassword(User user);
-	public String findAuthorityByName(String name, String authority);
-	public String findAuthorityById(int uid, String authority);
-	public boolean setAuthority(List<Integer> users, List<String> authorities, List<File> files);
+	public String findAuthorityById(int uid, String file);
+	public boolean setAuthority(int uid, String authorities, List<File> files);
 	public List<Integer> getAllId();
 	public List<User> getAllUser();
-	//public boolean setGroup();
+	public boolean deleteUser(User user);
+	public int findGidByUid(int uid);
+	public boolean setGroup(User user, int uid);
 }

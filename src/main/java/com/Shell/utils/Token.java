@@ -76,7 +76,15 @@ public class Token {
 		Date expiry = getExpiryDate(30 * 24 * 60);
 		if (authenticate(user))
 		{
-			jwt = getJWTString(user.getName(), user.getGroup(), expiry, key);
+			String group = null;
+			try {
+				user = DAOFactory.getIUserDAOInstance().findUserById(user.getUid());
+				group = DAOFactory.getIGroupDAOInstance().findGroupById(DAOFactory.getIUserDAOInstance().findGidByUid(user.getUid())).getName();
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			System.out.println(group);
+			jwt = getJWTString(user.getName(), group, expiry, key);
 		}
 		return jwt;
 	}
@@ -112,7 +120,6 @@ public class Token {
 				.setIssuer("Jersey-Security-Basic")
 				.setSubject(name)
 				.setAudience(group)
-				.setAudience("user")
 				.setExpiration(expires)
 				.setIssuedAt(new Date())
 				.setId("1")

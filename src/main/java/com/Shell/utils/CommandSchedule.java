@@ -15,13 +15,13 @@ import org.quartz.impl.triggers.CronTriggerImpl;
 import com.Shell.dao.factory.DAOFactory;
 import com.Shell.vo.Command;
 
-public class Schedule{
+public class CommandSchedule{
 
 		public static Date date;
 		static int count = 0;
 		static Command command = null;
 		static boolean isClose = false;
-		public Schedule()
+		public CommandSchedule()
 		{
 			start();
 		}

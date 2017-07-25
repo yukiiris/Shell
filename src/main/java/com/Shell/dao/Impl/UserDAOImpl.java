@@ -21,20 +21,188 @@ public class UserDAOImpl implements IUserDAO{
 		this.conn = conn;
 	}
 	
-	public String findAuthorityById(int uid, String authority)
+	
+	public boolean setGroup(User user, int gid)
 	{
-		String result = null;
+		boolean isDelete = false;
+		
 		try
 		{
-			String sql = "SELECT ? FROM user WHERE uid=?";
+			String sql = "UPDATE user_to_group SET degroup=0 WHERE degroup=1";
 			pstm = conn.prepareStatement(sql);
-			pstm.setString(1, authority);
-			pstm.setInt(2, uid);
+			
+			if (pstm.executeUpdate() > 0)
+			{
+				isDelete = true;
+			}
+			
+			sql = "UPDATE user_to_group SET degroup=1 WHERE uid=? AND gid=?";
+			pstm = conn.prepareStatement(sql);
+			pstm.setInt(1, user.getUid());
+			pstm.setInt(2, gid);
+			
+			if (pstm.executeUpdate() > 0)
+			{
+				isDelete = true;
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				if (pstm != null)
+				{
+					pstm.close();
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			try
+			{
+				if (conn != null)
+				{
+					conn.close();
+				}
+			}
+			catch (Exception exception)
+			{
+				exception.printStackTrace();
+			}
+		}
+		return isDelete;
+	}
+	
+	public boolean deleteUser(User user)
+	{
+		boolean isDelete = false;
+	
+		try
+		{
+			String sql = "DELETE FROM user WHERE uid=?";
+			pstm = conn.prepareStatement(sql);
+			pstm.setInt(1, user.getUid());
+			
+			if (pstm.executeUpdate() > 0)
+			{
+				isDelete = true;
+			}
+			sql = "DELETE FROM ua WHERE uid=?";
+			pstm = conn.prepareStatement(sql);
+			pstm.setInt(1, user.getUid());
+			
+			if (pstm.executeUpdate() > 0)
+			{
+				isDelete = isDelete && true;
+			}
+			sql = "DELETE FROM user_to_group WHERE uid=?";
+			pstm = conn.prepareStatement(sql);
+			pstm.setInt(1, user.getUid());
+			
+			if (pstm.executeUpdate() > 0)
+			{
+				isDelete = isDelete && true;
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				if (pstm != null)
+				{
+					pstm.close();
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			try
+			{
+				if (conn != null)
+				{
+					conn.close();
+				}
+			}
+			catch (Exception exception)
+			{
+				exception.printStackTrace();
+			}
+		}
+		return isDelete;
+	}
+	
+	public int findGidByUid(int uid)
+	{
+		int gid = 0;
+		try
+		{
+			String sql = "SELECT gid FROM user_to_group WHERE uid=? and degroup=1";
+			pstm = conn.prepareStatement(sql);
+			pstm.setInt(1, uid);
 			ResultSet rs = pstm.executeQuery();
 			
 			while (rs.next())
 			{
-				result = rs.getString(authority);
+				gid = rs.getInt("gid");
+			}
+			rs.close();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				if (pstm != null)
+				{
+					pstm.close();
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			try
+			{
+				if (conn != null)
+				{
+					conn.close();
+				}
+			}
+			catch (Exception exception)
+			{
+				exception.printStackTrace();
+			}
+		}
+		return gid;
+	}
+	
+	public String findAuthorityById(int uid, String file)
+	{
+		String result = null;
+		try
+		{
+			String sql = "select authority from ua where uid=? and name=?";
+			pstm = conn.prepareStatement(sql);
+			pstm.setInt(1, uid);
+			pstm.setString(2, file);
+			ResultSet rs = pstm.executeQuery();
+			
+			while (rs.next())
+			{
+				result = rs.getString("authority");
 			}
 			rs.close();
 		}
@@ -70,59 +238,58 @@ public class UserDAOImpl implements IUserDAO{
 		return result;
 	}
 	
-	public String findAuthorityByName(String name, String authority)
-	{
-		String result = null;
-		try
-		{
-			String sql = "SELECT ? FROM user WHERE name=?";
-			pstm = conn.prepareStatement(sql);
-			pstm.setString(1, authority);
-			pstm.setString(2, name);
-			ResultSet rs = pstm.executeQuery();
-			
-			while (rs.next())
-			{
-				result = rs.getString(authority);
-			}
-			rs.close();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			try
-			{
-				if (pstm != null)
-				{
-					pstm.close();
-				}
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-			try
-			{
-				if (conn != null)
-				{
-					conn.close();
-				}
-			}
-			catch (Exception exception)
-			{
-				exception.printStackTrace();
-			}
-		}
-		return result;
-	}
+//	public String findAuthorityByName(String name, String file)
+//	{
+//		String result = null;
+//		try
+//		{
+//			String sql = "select authority from authority where uid=? and file=?";
+//			pstm = conn.prepareStatement(sql);
+//			pstm.setInt(1, name);
+//			pstm.setString(2, file);
+//			ResultSet rs = pstm.executeQuery();
+//			
+//			while (rs.next())
+//			{
+//				result = rs.getString("authority");
+//			}
+//			rs.close();
+//		}
+//		catch (Exception e)
+//		{
+//			e.printStackTrace();
+//		}
+//		finally
+//		{
+//			try
+//			{
+//				if (pstm != null)
+//				{
+//					pstm.close();
+//				}
+//			}
+//			catch (Exception e)
+//			{
+//				e.printStackTrace();
+//			}
+//			try
+//			{
+//				if (conn != null)
+//				{
+//					conn.close();
+//				}
+//			}
+//			catch (Exception exception)
+//			{
+//				exception.printStackTrace();
+//			}
+//		}
+//		return result;
+//	}
 	
 	public User findUserById(int uid)
 	{
 		User user = new User();
-		System.out.println(11111);
 		try
 		{
 			String sql = "SELECT * FROM user WHERE uid=?";
@@ -132,12 +299,8 @@ public class UserDAOImpl implements IUserDAO{
 			
 			while (rs.next())
 			{
-				user.setX(rs.getString("x"));
-				user.setGroup(rs.getString("gid"));
 				user.setName(rs.getString("name"));
 				user.setPassword(rs.getString("password"));
-				user.setR(rs.getString("r"));
-				user.setW(rs.getString("w"));
 				user.setUid(rs.getInt("uid"));
 			}
 			rs.close();
@@ -223,20 +386,19 @@ public class UserDAOImpl implements IUserDAO{
 		return isFind;
 	}
 	
-	public boolean doCreate(User user)
+	public int doCreate(User user)
 	{
-		boolean isCreate = false;
+		int uid = 0;
 		try
 		{
-			String sql = "INSERT INTO user(id,name,group_name,password) VALUES(null,?,?,?)";
+			String sql = "INSERT INTO user(uid,name,password) VALUES(null,?,?)";
 			pstm = conn.prepareStatement(sql);
 			pstm.setString(1, user.getName());
-			pstm.setString(2, user.getGroup());
-			pstm.setString(3, user.getPassword().hashCode() + "");
+			pstm.setString(2, user.getPassword().hashCode() + "");
 			
 			if (pstm.executeUpdate() > 0)
 			{
-				isCreate = true;
+				uid = findID(user.getName());
 			}
 		}
 		catch (Exception e)
@@ -257,7 +419,7 @@ public class UserDAOImpl implements IUserDAO{
 				e.printStackTrace();
 			}
 		}
-		return isCreate;
+		return uid;
 	}
 
 	public boolean changePassword(User user)
@@ -326,12 +488,8 @@ public class UserDAOImpl implements IUserDAO{
 			while (rs.next())
 			{
 				User user = new User();
-				user.setX(rs.getString("x"));
-				user.setGroup(rs.getString("gid"));
 				user.setName(rs.getString("name"));
 				user.setPassword(rs.getString("password"));
-				user.setR(rs.getString("r"));
-				user.setW(rs.getString("w"));
 				user.setUid(rs.getInt("uid"));
 				users.add(user);
 			}
@@ -369,24 +527,25 @@ public class UserDAOImpl implements IUserDAO{
 		return users;
 	}
 	
-	public boolean setAuthority(List<Integer> users, List<String> authorities, List<File> files)
+	public boolean setAuthority(int uid, String authorities, List<File> files)
 	{
 		boolean isCreate = false;
 		
-		for (Integer user : users)
-		{
+
 			for (File file : files)
 			{
-				for (String authority : authorities)
-				{
 					try
 					{
-						String sql = "UPDATE user SET ?=? where uid=?";
+						String sql = "DELETE FROM ua WHERE uid=? AND name=?";
+						pstm.setInt(1, uid);
+						pstm.setString(2, file.getName());
+						pstm.executeUpdate();
+						
+						sql = "INSERT INTO ua(uid, authority, name) VALUES(?,?,?)";
 						pstm = conn.prepareStatement(sql);
-						pstm.setInt(3, user);
-						String s = DAOFactory.getIUserDAOInstance().findAuthorityById(user, authority);
-						pstm.setString(2, s + " " + file);
-						pstm.setString(1, authority);
+						pstm.setInt(1, uid);
+						pstm.setString(2, authorities);
+						pstm.setString(3, file.getName());
 						
 						if (pstm.executeUpdate() > 0)
 						{
@@ -413,8 +572,8 @@ public class UserDAOImpl implements IUserDAO{
 						}
 					}
 				}
-			}
-		}
+			
+		
 		return isCreate;
 	}
 
@@ -474,14 +633,14 @@ public class UserDAOImpl implements IUserDAO{
 		int ID = 0;
 		try
 		{
-			String sql = "SELECT id FROM user WHERE name=?";
+			String sql = "SELECT uid FROM user WHERE name=?";
 			pstm = conn.prepareStatement(sql);
 			pstm.setString(1, name);
 			ResultSet rs = pstm.executeQuery();
 			
 			while (rs.next())
 			{
-				ID = rs.getInt("id");
+				ID = rs.getInt("uid");
 			}
 			rs.close();
 		}

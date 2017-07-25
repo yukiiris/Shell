@@ -6,7 +6,7 @@ import java.util.List;
 import com.Shell.Jersey.API.CommandAPI;
 import com.Shell.dao.factory.DAOFactory;
 import com.Shell.utils.CommandPareser;
-import com.Shell.utils.Schedule;
+import com.Shell.utils.CommandSchedule;
 import com.Shell.vo.Command;
 import com.Shell.vo.User;
 
@@ -31,7 +31,7 @@ public class CommandImpl implements CommandAPI{
 		try
 		{
 			isAdd = DAOFactory.getICommandDAOInstance().addCommand(command);
-			Schedule.start();
+			CommandSchedule.start();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -58,7 +58,7 @@ public class CommandImpl implements CommandAPI{
 		try
 		{
 			isAdd = DAOFactory.getICommandDAOInstance().ajustCommand(command);
-			Schedule.start();
+			CommandSchedule.start();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -72,7 +72,7 @@ public class CommandImpl implements CommandAPI{
 		try {
 			commands = DAOFactory.getICommandDAOInstance().getAll(uid);
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		return commands;
 	}

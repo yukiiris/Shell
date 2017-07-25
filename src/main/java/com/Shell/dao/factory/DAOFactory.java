@@ -1,12 +1,14 @@
 package com.Shell.dao.factory;
 
 import com.Shell.dao.ICommandDAO;
+import com.Shell.dao.IDataDAO;
 import com.Shell.dao.IFileDAO;
 import com.Shell.dao.IGroupDAO;
 import com.Shell.dao.IKeyDAO;
 import com.Shell.dao.IResultDAO;
 import com.Shell.dao.IUserDAO;
 import com.Shell.dao.proxy.CommandDAOProxy;
+import com.Shell.dao.proxy.DataDAOProxy;
 import com.Shell.dao.proxy.FileDAOProxy;
 import com.Shell.dao.proxy.GroupDAOProxy;
 import com.Shell.dao.proxy.KeyDAOProxy;
@@ -43,5 +45,10 @@ public class DAOFactory {
 	public static IFileDAO getIFileDAOInstance() throws Exception
 	{
 			return new FileDAOProxy();
+	}
+	
+	public static IDataDAO getIDataDAOInstance() throws Exception
+	{
+			return new DataDAOProxy();
 	}
 }

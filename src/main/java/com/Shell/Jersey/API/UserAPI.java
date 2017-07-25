@@ -6,6 +6,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import com.Shell.vo.User;
@@ -17,7 +18,7 @@ public interface UserAPI {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public boolean createUser(User user);
+	public int createUser(User user, @QueryParam("gid") int gid);
 	
 	@Path("/password")
 	@POST
@@ -33,7 +34,7 @@ public interface UserAPI {
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public boolean setGroup(User user);
+	public boolean setGroup(User user, @QueryParam("gid")int gid);
 	
 	@DELETE
 	@Consumes(MediaType.APPLICATION_JSON)

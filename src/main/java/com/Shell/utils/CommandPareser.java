@@ -27,6 +27,19 @@ public class CommandPareser {
 		catch (Exception e) {
 			// TODO: handle exception
 		}
+		
+	}
+	
+	public CommandPareser (User user)
+	{
+		CommandPareser.user = user;
+		try
+		{
+			files = DAOFactory.getIFileDAOInstance().getAll();
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
 	}
 	
 	public boolean parse()
@@ -89,7 +102,12 @@ public class CommandPareser {
 			}
 			else
 			{
-				return rm(words, name);
+				if (create != 0)
+				{
+					rm(words, name);
+					create = 0;
+				}
+				return true;
 			}
 		}
 		return flag;
@@ -99,30 +117,30 @@ public class CommandPareser {
 	{
 		List<File> files = new ArrayList<>();
 		String intAthority ;
-		if (command.contains("-m") || command.equals("--mode"))
-		{
-			intAthority = words[2];
-			
-
-			File file = new File();
-			file.setGid(Integer.parseInt(user.getGroup().split(" ")[0]));
-			file.setName(name);
-			file.setUid(user.getUid());
-			files.add(file);
-			
-		}
-		else
-		{
-			intAthority = 644 + "";
-			File file = new File();
-			file.setGid(Integer.parseInt(user.getGroup().split(" ")[0]));
-			file.setName(name);
-			file.setUid(user.getUid());
-			files.add(file);
-			parseAuthority(intAthority, files);
-		}
 		try
 		{
+			if (command.contains("-m") || command.equals("--mode"))
+			{
+				intAthority = words[2];
+				
+	
+				File file = new File();
+				file.setGid(DAOFactory.getIUserDAOInstance().findGidByUid(user.getUid()));
+				file.setName(name);
+				file.setUid(user.getUid());
+				files.add(file);
+				
+			}
+			else
+			{
+				intAthority = 644 + "";
+				File file = new File();
+				file.setGid(DAOFactory.getIUserDAOInstance().findGidByUid(user.getUid()));
+				file.setName(name);
+				file.setUid(user.getUid());
+				files.add(file);
+				parseAuthority(intAthority, files);
+			}
 			DAOFactory.getIFileDAOInstance().addFiles(files);
 		}
 		catch (Exception e) {
@@ -148,19 +166,19 @@ public class CommandPareser {
 		}
 		if (create == 0)
 		{
-			return false;
+			return true;
 		}
 		boolean isAdd = false;
 		try
 		{
 			List<File> f = new ArrayList<>();
 			File file = new File();
-			file.setGid(Integer.parseInt(user.getGroup().split(" ")[0]));
+			file.setGid(DAOFactory.getIUserDAOInstance().findGidByUid(user.getUid()));
 			file.setName(name);
 			file.setUid(user.getUid());
 			f.add(file);
 			isAdd = DAOFactory.getIFileDAOInstance().addFiles(f);
-			parseAuthority(755 + "", files);
+			parseAuthority(755 + "", f);
 		} 
 		catch (Exception e) 
 		{
@@ -218,14 +236,15 @@ public class CommandPareser {
 	{
 		if (command.contains(">"))
 		{
-			List<File> files = new ArrayList<>();
-			File file = new File();
-			file.setGid(Integer.parseInt(user.getGroup().split(" ")[0]));
-			file.setName(name);
-			file.setUid(user.getUid());
-			files.add(file);
 			try
 			{
+				List<File> files = new ArrayList<>();
+				File file = new File();
+				file.setGid(DAOFactory.getIUserDAOInstance().findGidByUid(user.getUid()));
+				file.setName(name);
+				file.setUid(user.getUid());
+				files.add(file);
+			
 				DAOFactory.getIFileDAOInstance().addFiles(files);
 				parseAuthority(755 + "", files);
 			}
@@ -271,111 +290,74 @@ public class CommandPareser {
 	public static boolean getAuthority(User user, File file, String authority)
 	{
 		String result = null;
-		if (user.getGroup().contains("1"))
+		try
 		{
-			return true;
-		}
-		try 
-		{
-			result = DAOFactory.getIUserDAOInstance().findAuthorityByName(user.getName(), authority);
+			if (DAOFactory.getIUserDAOInstance().findGidByUid(user.getUid()) == 1)
+			{
+				return true;
+			}
+		
+			result = DAOFactory.getIUserDAOInstance().findAuthorityById(user.getUid(), file.getName());
 		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		String[] results = result.split(" ");
-		for (String string : results)
+		if (result.contains(authority))
 		{
-			if (string.equals(file.getName()))
-			{
-				return true;
-			}
+			return true;
 		}
 		
 		try 
 		{
-			result = DAOFactory.getIGroupDAOInstance().findAuthorityById(Integer.parseInt(user.getGroup().split(" ")[0]), authority);
+			result = DAOFactory.getIGroupDAOInstance().findAuthorityById(DAOFactory.getIUserDAOInstance().findGidByUid(user.getUid()), authority);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		results = result.split(" ");
-		for (String string : results)
+		
+		if (result.contains(authority))
 		{
-			if (string.equals(file.getName()))
-			{
-				return true;
-			}
+			return true;
 		}
 		return false;
 	}
 	
-	public static List<Integer> getUserFromGroup(String gs)
-	{
-		String[] groups = gs.split(" ");
-		int gid = Integer.parseInt(groups[0]);
-		List<Integer> users = new ArrayList<>();
-		Group group = new  Group();
-		try
-		{
-			group = DAOFactory.getIGroupDAOInstance().findGroupById(gid);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		String[] user = group.getUsers().split(" ");
-		for (String s : user)
-		{
-			users.add(Integer.parseInt(s));
-		}
-		return users;
-	}
 	
-	public static List<String> getAuList(int i)
+	public static String getAuList(int i)
 	{
-		List<String> authority = new ArrayList<>();
+		
 		if (i == 0)
 		{
-			return authority;
+			return null;
 		}
 		else if (i == 1)
 		{
-			authority.add("execute");
-			return authority;
+			return "x";
 		}
 		else if (i == 2)
 		{
-			authority.add("write");
-			return authority;
+			return "w";
 		}
 		else if (i == 4)
 		{
-			authority.add("read");
-			return authority;
+			return "r";
 		}
 		else if (i == 3)
 		{
-			authority.add("execute");
-			authority.add("write");
-			return authority;
+			return "xw";
 		}
 		else if (i == 5)
 		{
-			authority.add("read");
-			authority.add("write");
-			return authority;
+			return "rw";
 		}
 		else if (i == 6)
 		{
-			authority.add("execute");
-			authority.add("read");
-			return authority;
+			
+			return "xr";
 		}
 		else if (i == 7)
 		{
-			authority.add("execute");
-			authority.add("write");
-			authority.add("read");
-			return authority;
+			return "xrw";
 		}
 		return null;
 	}
@@ -388,135 +370,143 @@ public class CommandPareser {
 			try {
 				if (authorities[i].equals("7"))
 				{
-					List<String> authority = getAuList(7);
+					String authority = getAuList(7);
 					
 					if (i == 0)
 					{
-						List<Integer> users = new ArrayList<>();
-						users.add(user.getUid());
-						DAOFactory.getIUserDAOInstance().setAuthority(users, authority, file);
+					
+						DAOFactory.getIUserDAOInstance().setAuthority(user.getUid(), authority, file);
 					}
 					else if (i == 1)
 					{
-						DAOFactory.getIGroupDAOInstance().setAuthority(Integer.parseInt(user.getGroup().split(" ")[0]), authority, file.get(0).getName());
+						DAOFactory.getIGroupDAOInstance().setAuthority(DAOFactory.getIUserDAOInstance().findGidByUid(user.getUid()), authority, file.get(0).getName());
 					}
 					else if (i == 2)
 					{
-						DAOFactory.getIUserDAOInstance().setAuthority(DAOFactory.getIUserDAOInstance().getAllId(), authority, file);
-					}
+						for (Group group : DAOFactory.getIGroupDAOInstance().getAllGroup())
+						{
+							DAOFactory.getIGroupDAOInstance().setAuthority(group.getGid(), authority, file.get(0).getName());
+						}					}
 				}
 				else if (authorities[i].equals("5"))
 				{
-					List<String> authority = getAuList(5);
+					String authority = getAuList(5);
 					
 					if (i == 0)
 					{
-						List<Integer> users = new ArrayList<>();
-						users.add(user.getUid());
-						DAOFactory.getIUserDAOInstance().setAuthority(users, authority, file);
+						
+						DAOFactory.getIUserDAOInstance().setAuthority(user.getUid(), authority, file);
 					}
 					else if (i == 1)
 					{
-						DAOFactory.getIGroupDAOInstance().setAuthority(Integer.parseInt(user.getGroup().split(" ")[0]), authority, file.get(0).getName());
+						DAOFactory.getIGroupDAOInstance().setAuthority(DAOFactory.getIUserDAOInstance().findGidByUid(user.getUid()), authority, file.get(0).getName());
 					}
 					else if (i == 2)
 					{
-						DAOFactory.getIUserDAOInstance().setAuthority(DAOFactory.getIUserDAOInstance().getAllId(), authority, files);
-					}
+						for (Group group : DAOFactory.getIGroupDAOInstance().getAllGroup())
+						{
+							DAOFactory.getIGroupDAOInstance().setAuthority(group.getGid(), authority, file.get(0).getName());
+						}					}
 				}
 				else if (authorities[i].equals("6"))
 				{
-					List<String> authority = getAuList(6);
+					String authority = getAuList(6);
 					
 					if (i == 0)
 					{
-						List<Integer> users = new ArrayList<>();
-						users.add(user.getUid());
-						DAOFactory.getIUserDAOInstance().setAuthority(users, authority, files);
+						DAOFactory.getIUserDAOInstance().setAuthority(user.getUid(), authority, file);
+
 					}
 					else if (i == 1)
 					{
-						DAOFactory.getIGroupDAOInstance().setAuthority(Integer.parseInt(user.getGroup().split(" ")[0]), authority, file.get(0).getName());
+						DAOFactory.getIGroupDAOInstance().setAuthority(DAOFactory.getIUserDAOInstance().findGidByUid(user.getUid()), authority, file.get(0).getName());
 					}
 					else if (i == 2)
 					{
-						DAOFactory.getIUserDAOInstance().setAuthority(DAOFactory.getIUserDAOInstance().getAllId(), authority, files);
-					}
+						for (Group group : DAOFactory.getIGroupDAOInstance().getAllGroup())
+						{
+							DAOFactory.getIGroupDAOInstance().setAuthority(group.getGid(), authority, file.get(0).getName());
+						}					}
 				}
 				else if (authorities[i].equals("3"))
 				{
-					List<String> authority = getAuList(3);
+					String authority = getAuList(3);
 					
 					if (i == 0)
 					{
-						List<Integer> users = new ArrayList<>();
-						users.add(user.getUid());
-						DAOFactory.getIUserDAOInstance().setAuthority(users, authority, files);
+						DAOFactory.getIUserDAOInstance().setAuthority(user.getUid(), authority, file);
+
 					}
 					else if (i == 1)
 					{
-						DAOFactory.getIGroupDAOInstance().setAuthority(Integer.parseInt(user.getGroup().split(" ")[0]), authority, file.get(0).getName());
+						DAOFactory.getIGroupDAOInstance().setAuthority(DAOFactory.getIUserDAOInstance().findGidByUid(user.getUid()), authority, file.get(0).getName());
 					}
 					else if (i == 2)
 					{
-						DAOFactory.getIUserDAOInstance().setAuthority(DAOFactory.getIUserDAOInstance().getAllId(), authority, files);
-					}
+						for (Group group : DAOFactory.getIGroupDAOInstance().getAllGroup())
+						{
+							DAOFactory.getIGroupDAOInstance().setAuthority(group.getGid(), authority, file.get(0).getName());
+						}					}
 				}
 				else if (authorities[i].equals("4"))
 				{
-					List<String> authority = getAuList(4);
+					String authority = getAuList(4);
 					
 					if (i == 0)
 					{
-						List<Integer> users = new ArrayList<>();
-						users.add(user.getUid());
-						DAOFactory.getIUserDAOInstance().setAuthority(users, authority, files);
+						DAOFactory.getIUserDAOInstance().setAuthority(user.getUid(), authority, file);
+
 					}
 					else if (i == 1)
 					{
-						DAOFactory.getIGroupDAOInstance().setAuthority(Integer.parseInt(user.getGroup().split(" ")[0]), authority, file.get(0).getName());
+						DAOFactory.getIGroupDAOInstance().setAuthority(DAOFactory.getIUserDAOInstance().findGidByUid(user.getUid()), authority, file.get(0).getName());
 					}
 					else if (i == 2)
 					{
-						DAOFactory.getIUserDAOInstance().setAuthority(DAOFactory.getIUserDAOInstance().getAllId(), authority, files);
-					}
+						for (Group group : DAOFactory.getIGroupDAOInstance().getAllGroup())
+						{
+							DAOFactory.getIGroupDAOInstance().setAuthority(group.getGid(), authority, file.get(0).getName());
+						}					}
 				}
 				else if (authorities[i].equals("2"))
 				{
-					List<String> authority = getAuList(2);
+					String authority = getAuList(2);
 					
 					if (i == 0)
 					{
-						List<Integer> users = new ArrayList<>();
-						users.add(user.getUid());
-						DAOFactory.getIUserDAOInstance().setAuthority(users, authority, files);
+						DAOFactory.getIUserDAOInstance().setAuthority(user.getUid(), authority, file);
+
 					}
 					else if (i == 1)
 					{
-						DAOFactory.getIGroupDAOInstance().setAuthority(Integer.parseInt(user.getGroup().split(" ")[0]), authority, file.get(0).getName());
+						DAOFactory.getIGroupDAOInstance().setAuthority(DAOFactory.getIUserDAOInstance().findGidByUid(user.getUid()), authority, file.get(0).getName());
 					}
 					else if (i == 2)
 					{
-						DAOFactory.getIUserDAOInstance().setAuthority(DAOFactory.getIUserDAOInstance().getAllId(), authority, files);
-					}
+						for (Group group : DAOFactory.getIGroupDAOInstance().getAllGroup())
+						{
+							DAOFactory.getIGroupDAOInstance().setAuthority(group.getGid(), authority, file.get(0).getName());
+						}					}
 				}
 				else if (authorities[i].equals("1"))
 				{
-					List<String> authority = getAuList(1);
+					String authority = getAuList(1);
 					
 					if (i == 0)
 					{
-						List<Integer> users = new ArrayList<>();
-						users.add(user.getUid());
-						DAOFactory.getIUserDAOInstance().setAuthority(users, authority, files);
+						DAOFactory.getIUserDAOInstance().setAuthority(user.getUid(), authority, file);
+
 					}
 					else if (i == 1)
 					{
-						DAOFactory.getIGroupDAOInstance().setAuthority(Integer.parseInt(user.getGroup().split(" ")[0]), authority, file.get(0).getName());
+						DAOFactory.getIGroupDAOInstance().setAuthority(DAOFactory.getIUserDAOInstance().findGidByUid(user.getUid()), authority, file.get(0).getName());
 					}
 					else if (i == 2)
 					{
-						DAOFactory.getIUserDAOInstance().setAuthority(DAOFactory.getIUserDAOInstance().getAllId(), authority, files);
+						for (Group group : DAOFactory.getIGroupDAOInstance().getAllGroup())
+						{
+							DAOFactory.getIGroupDAOInstance().setAuthority(group.getGid(), authority, file.get(0).getName());
+						}
 					}
 				}
 				else if (authorities[i].equals("0"))

@@ -15,7 +15,8 @@ public class TimerListener implements ServletContextListener{
 
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
-		Schedule.start();
+		CommandSchedule.start();
+		DataSchedule.start();
 		try {
 			new Notify().start();
 		} catch (Exception e) {

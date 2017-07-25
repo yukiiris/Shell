@@ -21,7 +21,7 @@ public class GroupImpl implements GroupAPI{
 	public boolean deleteGroup(Group group) {
 		boolean isDelete = false;
 		try {
-			//isDelete = DAOFactory.getIGroupDAOInstance().d
+			isDelete = DAOFactory.getIGroupDAOInstance().deleteGroup(group);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -29,10 +29,10 @@ public class GroupImpl implements GroupAPI{
 	}
 
 	@Override
-	public boolean addUser(int uid, int gid) {
+	public boolean addUser(int uid, int gid, int isDe) {
 		boolean isAdd = false;
 		try {
-			isAdd = DAOFactory.getIGroupDAOInstance().addUser(uid, gid);
+			isAdd = DAOFactory.getIGroupDAOInstance().addUser(uid, gid, isDe);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

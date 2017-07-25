@@ -162,6 +162,7 @@ public class FileDAOImpl implements IFileDAO{
 		boolean isDelete = false;
 		try
 		{
+			System.out.println(name);
 			String sql = "DELETE FROM file WHERE name=?";
 			pstm = conn.prepareStatement(sql);
 			pstm.setString(1, name);
@@ -169,6 +170,23 @@ public class FileDAOImpl implements IFileDAO{
 			if (pstm.executeUpdate() > 0)
 			{
 				isDelete = true;
+			}
+			
+			sql = "DELETE FROM ua WHERE name=?";
+			pstm = conn.prepareStatement(sql);
+			pstm.setString(1, name);
+			
+			if (pstm.executeUpdate() > 0)
+			{
+				isDelete = isDelete && true;
+			}
+			sql = "DELETE FROM ga WHERE name=?";
+			pstm = conn.prepareStatement(sql);
+			pstm.setString(1, name);
+			
+			if (pstm.executeUpdate() > 0)
+			{
+				isDelete =  isDelete && true;
 			}
 		}
 		catch (Exception e)
@@ -207,6 +225,7 @@ public class FileDAOImpl implements IFileDAO{
 				file.setGid(rs.getInt("gid"));
 				file.setName(rs.getString("name"));
 				file.setUid(rs.getInt("uid"));
+				files.add(file);
 			}
 		}
 		catch (Exception e)

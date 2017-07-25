@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.server.ContainerRequest;
 
@@ -24,36 +25,24 @@ public class PermissionFilter implements ContainerRequestFilter{
 		String group = "";
 		String name = "";
 		
+		if (path.equals("/user") && method.equals("POST"))
+		{
+			return;
+		}
 		try {
 			group = Jwts.parser().setSigningKey(Token.receiveSecret(DAOFactory.getIKeyDAOInstance().getKey())).parseClaimsJws(jsw).getBody().getAudience();
 			name = Jwts.parser().setSigningKey(Token.receiveSecret(DAOFactory.getIKeyDAOInstance().getKey())).parseClaimsJws(jsw).getBody().getSubject();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-			
+		System.out.println(group);
 		if (group.equals("root"))
 		{
-			return ;
+			return;
 		}
-		else if (path.contains("group"))
+		if (path.contains("user/new") || path.contains("user") && method.equals("DELETE") || path.contains("user") && method.equals("PUT") || path.contains("group"))
 		{
-			//TODO
-		}
-		
-		else if (method.equals("POST"))
-		{
-			if (path.contains("user"))
-			{
-				if (path.contains("new"))
-				{
-					return;
-				}
-				else
-				{
-					//TODO
-				}
-			}
-			
+			requestContext.abortWith(Response.status(Response.Status.BAD_REQUEST).entity("permission denied").build());
 		}
 	}
 
