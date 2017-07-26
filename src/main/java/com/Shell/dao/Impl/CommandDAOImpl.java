@@ -1,5 +1,7 @@
 package com.Shell.dao.Impl;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,6 +21,7 @@ public class CommandDAOImpl implements ICommandDAO{
 	{
 		this.conn = conn;
 	}
+	
 	
 	public boolean Complete(int cid)
 	{

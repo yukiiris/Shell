@@ -29,4 +29,10 @@ public interface CommandAPI {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Command> getAll(@QueryParam("uid")int uid);
+	
+	@Path("/bash")
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean addBash(Command command);
 }

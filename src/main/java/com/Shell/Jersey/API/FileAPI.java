@@ -24,6 +24,7 @@ public interface FileAPI {
 	@Produces(MediaType.APPLICATION_JSON)
 	public boolean changeMode(@QueryParam("authority")String authority, File file);
 	
+	@Path("/group")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)

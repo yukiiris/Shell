@@ -36,7 +36,7 @@ public class RunJob implements Job{
 			e.printStackTrace();
 		}
 		CommandPareser commandPareser = new CommandPareser(command, user);
-		commandPareser.parse();
+		commandPareser.parse(CommandPareser.command);
 	}
 	
 	public void execute(JobExecutionContext context) throws JobExecutionException

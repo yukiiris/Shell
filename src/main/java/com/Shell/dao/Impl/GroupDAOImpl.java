@@ -29,6 +29,7 @@ public class GroupDAOImpl implements IGroupDAO{
 			try
 				{
 					String sql = "DELETE FROM ga WHERE gid=? AND name=?";
+					pstm = conn.prepareStatement(sql);
 					pstm.setInt(1, gid);
 					pstm.setString(2, file);
 					pstm.executeUpdate();

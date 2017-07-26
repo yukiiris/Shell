@@ -1,16 +1,19 @@
 package com.Shell.utils;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.Shell.dao.factory.DAOFactory;
+import com.Shell.vo.Command;
 import com.Shell.vo.File;
 import com.Shell.vo.Group;
 import com.Shell.vo.User;
 
 public class CommandPareser {
 
-	private static String command;
+	public static String command;
 	private static List<File> files;
 	private static User user;
 	public static int create = 0;
@@ -42,7 +45,33 @@ public class CommandPareser {
 		}
 	}
 	
-	public boolean parse()
+	public boolean readBash(Command bash)
+	{
+		String[] st = bash.getCommand().split("\n");
+		for (int i = 1; i < st.length; i++)
+		{
+			if (!parse(st[i]))
+			{
+				return false;
+			}
+	        try 
+	        {
+	        	Command command = new Command();
+	        	command.setCommand(st[i]);
+	        	command.setDate(bash.getDate());
+	        	command.setUid(bash.getUid());
+				DAOFactory.getICommandDAOInstance().addCommand(command);
+			} 
+	        catch (Exception e) 
+	        {
+				e.printStackTrace();
+				return false;
+			}
+		}
+        return true;
+	}
+	
+	public boolean parse(String command)
 	{
 		String[] words = command.split(" ");
 		boolean flag = false;

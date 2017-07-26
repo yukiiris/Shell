@@ -531,47 +531,47 @@ public class UserDAOImpl implements IUserDAO{
 	{
 		boolean isCreate = false;
 		
-
-			for (File file : files)
-			{
+		for (File file : files)
+		{
+				try
+				{
+					String sql = "DELETE FROM ua WHERE uid=? AND name=?";
+					pstm = conn.prepareStatement(sql);
+					pstm.setInt(1, uid);
+					pstm.setString(2, file.getName());
+					pstm.executeUpdate();
+					
+					sql = "INSERT INTO ua(uid, authority, name) VALUES(?,?,?)";
+					pstm = conn.prepareStatement(sql);
+					pstm.setInt(1, uid);
+					pstm.setString(2, authorities);
+					pstm.setString(3, file.getName());
+					
+					if (pstm.executeUpdate() > 0)
+					{
+						isCreate = true;
+					}
+				}
+				
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+				finally
+				{
 					try
 					{
-						String sql = "DELETE FROM ua WHERE uid=? AND name=?";
-						pstm.setInt(1, uid);
-						pstm.setString(2, file.getName());
-						pstm.executeUpdate();
-						
-						sql = "INSERT INTO ua(uid, authority, name) VALUES(?,?,?)";
-						pstm = conn.prepareStatement(sql);
-						pstm.setInt(1, uid);
-						pstm.setString(2, authorities);
-						pstm.setString(3, file.getName());
-						
-						if (pstm.executeUpdate() > 0)
+						if (pstm != null)
 						{
-							isCreate = true;
+							pstm.close();
 						}
 					}
-					
 					catch (Exception e)
 					{
 						e.printStackTrace();
 					}
-					finally
-					{
-						try
-						{
-							if (pstm != null)
-							{
-								pstm.close();
-							}
-						}
-						catch (Exception e)
-						{
-							e.printStackTrace();
-						}
-					}
 				}
+			}
 			
 		
 		return isCreate;

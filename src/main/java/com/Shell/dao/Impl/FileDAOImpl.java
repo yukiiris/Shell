@@ -32,8 +32,6 @@ public class FileDAOImpl implements IFileDAO{
 			{
 				isChange = true;
 			}
-			sql = "";
-			//TODO
 		}
 		catch (Exception e)
 		{

@@ -13,7 +13,7 @@ public class DataJob implements Job{
 	{
 		try
 		{
-			DAOFactory.getIDataDAOInstance().addData(Chart.getCPU(), Chart.getMem(), Chart.getNet());
+			//DAOFactory.getIDataDAOInstance().addData(Chart.getCPU(), Chart.getMem(), Chart.getNet());
 		} 
 		catch (Exception e) 
 		{

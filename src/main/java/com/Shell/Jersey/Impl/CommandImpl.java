@@ -24,7 +24,7 @@ public class CommandImpl implements CommandAPI{
 			e.printStackTrace();
 		}
 		CommandPareser pareser = new CommandPareser(command.getCommand(), user);
-		if (!pareser.parse())
+		if (!pareser.parse(CommandPareser.command))
 		{
 			return false;
 		}
@@ -51,7 +51,7 @@ public class CommandImpl implements CommandAPI{
 			e.printStackTrace();
 		}
 		CommandPareser pareser = new CommandPareser(command.getCommand(), user);
-		if (!pareser.parse())
+		if (!pareser.parse(CommandPareser.command))
 		{
 			return false;
 		}
@@ -76,5 +76,28 @@ public class CommandImpl implements CommandAPI{
 		}
 		return commands;
 	}
+
+	@Override
+	public boolean addBash(Command command)
+	{
+		User user = new User();
+		boolean isAdd = false;
+		try
+		{
+			user = DAOFactory.getIUserDAOInstance().findUserById(command.getUid());
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		CommandPareser pareser =  new CommandPareser(user);
+		isAdd = pareser.readBash(command);
+		if (isAdd)
+		{
+			CommandSchedule.start();
+		}
+		return isAdd;
+	}
+	
+	
 
 }
